@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
-import java.util.*
+import uz.task.models.CommonModel
+import uz.task.models.ModelOne
+import uz.task.models.ModelTwo
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,9 +24,10 @@ class MainActivity : AppCompatActivity() {
 
         adapter = RAdapter()
 
-        val items = arrayListOf<Int>()
-        for (i in 0..100)
-            items.add(i)
+        val items = arrayListOf<CommonModel>()
+        for (i in 0..20) {
+            items.addAll(arrayOf(ModelOne(i), ModelTwo("txt$i")))
+        }
 
         recycler.adapter = adapter.apply {
             setData(items)
@@ -36,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 
     private val simpleCallback = object : ItemTouchHelper.SimpleCallback(
         ItemTouchHelper.UP.or(ItemTouchHelper.DOWN).or(ItemTouchHelper.END)
-            .or(ItemTouchHelper.START),0
+            .or(ItemTouchHelper.START), 0
     ) {
         override fun onMove(
             recyclerView: RecyclerView,
@@ -46,8 +49,7 @@ class MainActivity : AppCompatActivity() {
             val start = viewHolder.adapterPosition
             val end = target.adapterPosition
 
-            Collections.swap(adapter.items, start, end)
-            recyclerView.adapter?.notifyItemMoved(start,end)
+            adapter.onItemMove(start, end)
             return true
         }
 
